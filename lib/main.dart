@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 
-import './question.dart';
-import './answer.dart';
+import 'quiz.dart';
+import 'result.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,29 +18,49 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   var _questionIndex = 0;
+  var _totalScore = 0;
 
-  final questions = const [
+  final _questions = const [
     {
       "questionText": "What's your favorite color?",
-      "answers": ["Black", "Blue", "Peacock", "Green"]
+      "answers": [
+        {"text": "Black", "score": 9},
+        {"text": "Blue", "score": 8},
+        {"text": "Peacock", "score": 10},
+        {"text": "Green", "score": 7}
+      ]
     },
     {
       "questionText": "What's your favorite animal?",
-      "answers": ["Monkey", "Lion", "Zebra", "Elephant"]
+      "answers": [
+        {"text": "Monkey", "score": 10},
+        {"text": "Lion", "score": 7},
+        {"text": "Zebra", "score": 9},
+        {"text": "Elephant", "score": 8}
+      ]
     },
     {
       "questionText": "Who's your favorite instructor?",
-      "answers": ["Harry", "Max", "Carry", "Garry"]
+      "answers": [
+        {"text": "Harry", "score": 9},
+        {"text": "Max", "score": 10},
+        {"text": "Carry", "score": 8},
+        {"text": "Garry", "score": 7}
+      ]
     }
   ];
 
-  void _answerQuestion() {
+  void _answerQuestion(int score) {
+    _totalScore += score;
+
     setState(() {
       _questionIndex += 1;
     });
 
-    if (_questionIndex < questions.length) {
+    if (_questionIndex < _questions.length) {
       print("We have more questions!");
+    } else {
+      print("No more questions to show!");
     }
   }
 
@@ -51,15 +71,13 @@ class _MyAppState extends State<MyApp> {
       appBar: AppBar(
         title: Text("Quizzes"),
       ),
-      body: Column(
-        children: [
-          Question(questions[_questionIndex]["questionText"]),
-          ...(questions[_questionIndex]["answers"] as List<String>)
-              .map((answer) {
-            return Answer(_answerQuestion, answer);
-          }).toList()
-        ],
-      ),
+      body: _questionIndex < _questions.length
+          ? Quiz(
+              answerQuestion: _answerQuestion,
+              questionIndex: _questionIndex,
+              questions: _questions,
+            )
+          : Result(),
     ));
   }
 }
